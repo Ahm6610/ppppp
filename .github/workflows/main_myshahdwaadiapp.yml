@@ -59,10 +59,10 @@ jobs:
         run: unzip release.zip
 
       
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
-        with:
-          app-name: 'myshahdwaadiapp'
-          slot-name: 'Production'
+     - name: 'Deploy to Azure Web App'
+  uses: azure/webapps-deploy@v3
+  id: deploy-to-webapp
+  with:
+    app-name: 'myshahdwaadiapp'
+    # slot-name: 'production'   # Optional, omit for production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0467A3B75F314AE485D0518B49B4FEC8 }}
