@@ -36,6 +36,7 @@
         list-style: none;
         position: relative;
         z-index: 2;
+        text-align: right;
       }
       input, button {
         padding: 8px;
@@ -75,7 +76,34 @@
         background: #eee;
         position: relative;
         z-index: 2;
-        image-rendering: auto; /* Let browser choose best quality */
+        image-rendering: auto;
+      }
+      .message-bot {
+        background: rgba(21, 102, 10, 0.13);
+        color: #1bd401;
+        border-right: 5px solid #1bd401;
+        border-radius: 10px;
+        margin: 6px 0;
+        padding: 7px 10px 7px 36px;
+        position: relative;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        direction: rtl;
+      }
+      .message-bot::before {
+        content: "🤖";
+        margin-left: 8px;
+        font-size: 1.2em;
+      }
+      .message-user {
+        background: rgba(0,0,0,0.07);
+        color: #fff;
+        border-radius: 10px;
+        margin: 6px 0;
+        padding: 7px 10px 7px 10px;
+        direction: rtl;
+        text-align: right;
       }
       @media (max-width: 480px) {
         .chat-container {
@@ -91,7 +119,6 @@
   </head>
   <body>
     <div class="chat-container">
-      <!-- Large, crisp food photo with frame -->
       <img src="images/food.jpg" alt="Food Photo" class="food-photo" loading="eager" />
       <h2>!اهلا بكم في دردشة شهد وعدي</h2>
       <ul id="messages"></ul>
@@ -102,14 +129,25 @@
       var socket = io();
       socket.on('message', function(msg) {
         var item = document.createElement('li');
-        item.textContent = msg;
+        // Detect bot message by prefix
+        if (typeof msg === "string" && msg.startsWith("بوت شهد وعدي:")) {
+          item.className = "message-bot";
+          item.textContent = msg.replace("بوت شهد وعدي:", "").trim();
+        } else {
+          item.className = "message-user";
+          item.textContent = msg;
+        }
         document.getElementById('messages').appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
+        var messagesDiv = document.getElementById('messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
       });
       function sendMessage() {
         var input = document.getElementById("myMessage");
-        socket.send(input.value);
-        input.value = "";
+        var value = input.value.trim();
+        if (value.length > 0) {
+          socket.send(value);
+          input.value = "";
+        }
       }
       document.getElementById("myMessage").addEventListener("keyup", function(event) {
         if (event.key === "Enter") sendMessage();
